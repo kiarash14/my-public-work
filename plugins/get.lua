@@ -14,7 +14,7 @@ local function list_variables(msg)
     local names = redis:hkeys(hash)
     local text = ''
     for i=1, #names do
-      text = text..names[i]..'\n'
+      text = '> '..text..names[i]..'\n'
     end
     return text
   end
@@ -25,9 +25,9 @@ local function get_value(msg, var_name)
   if hash then
     local value = redis:hget(hash, var_name)
     if not value then
-      return'Not found, use "!get" to list variables'
+      return'Not found variable'
     else
-      return var_name..' => '..value
+      return value
     end
   end
 end
@@ -41,11 +41,14 @@ local function run(msg, matches)
 end
 
 return {
-  description = "Retrieves variables saved with !set", 
-  usage = "!get (value_name): Returns the value_name value.",
+  description = "View Saved Variables With !set", 
+  usage = {
+	"/get : view all variables",
+	"/get (value) : view variable",
+	},
   patterns = {
-    "^(!get) (.+)$",
-    "^!get$"
+    "^([!/]get) (.+)$",
+    "^[!/]get$"
   },
   run = run
 }
